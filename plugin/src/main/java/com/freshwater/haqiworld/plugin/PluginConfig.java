@@ -24,9 +24,9 @@ public final class PluginConfig {
 
     public PluginConfig(JavaPlugin plugin) {
         FileConfiguration c = plugin.getConfig();
-        haqiVolumeThreshold = c.getDouble("haqi-volume-threshold", 0.05);
-        haqiReferenceLevel = c.getDouble("haqi-reference-level", 0.12);
-        voiceActivationBoost = c.getBoolean("voice-activation-boost", true);
+        haqiVolumeThreshold = c.getDouble("haqi-volume-threshold", 0.12);
+        haqiReferenceLevel = c.getDouble("haqi-reference-level", 0.15);
+        voiceActivationBoost = c.getBoolean("voice-activation-boost", false);
         voiceActivationMinLoudness = c.getDouble("voice-activation-min-loudness", 0.55);
         requireHaqiItem = c.getBoolean("require-haqi-item", true);
         removeMeleeCombat = c.getBoolean("remove-melee-combat", true);
