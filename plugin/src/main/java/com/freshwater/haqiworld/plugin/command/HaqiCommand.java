@@ -45,7 +45,7 @@ public final class HaqiCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             sender.sendMessage(Component.text(
-                    "用法: /haqi <give|giveall|clear|top|unlock|debug|status>", NamedTextColor.YELLOW));
+                    "用法: /haqi <recipe|status|top|debug|give|giveall|clear|unlock>", NamedTextColor.YELLOW));
             return true;
         }
         String sub = args[0].toLowerCase(Locale.ROOT);
@@ -57,12 +57,32 @@ public final class HaqiCommand implements CommandExecutor, TabCompleter {
             case "giveall" -> giveAll(sender);
             case "clear" -> clear(sender, args);
             case "status" -> status(sender);
+            case "recipe", "recipes", "help" -> showRecipes(sender);
             default -> {
                 sender.sendMessage(Component.text(
-                        "用法: /haqi <give|giveall|clear|top|unlock|debug|status>", NamedTextColor.YELLOW));
+                        "用法: /haqi <recipe|status|top|debug|give|giveall|clear|unlock>", NamedTextColor.YELLOW));
                 yield true;
             }
         };
+    }
+
+    private boolean showRecipes(CommandSender sender) {
+        sender.sendMessage(Component.text("=== 哈气合成配方 ===", NamedTextColor.GOLD));
+        sender.sendMessage(Component.text("升级哈气", NamedTextColor.AQUA));
+        sender.sendMessage(Component.text("  铁锭  铁锭  铁锭", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  铁锭  基础哈气  铁锭", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  铁锭  铁锭  铁锭", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("强化哈气", NamedTextColor.AQUA));
+        sender.sendMessage(Component.text("  钻石  钻石  钻石", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  钻石  升级哈气  钻石", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  钻石  钻石  钻石", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("坚守者哈气", NamedTextColor.AQUA));
+        sender.sendMessage(Component.text("  回响碎片  回响碎片  回响碎片", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  回响碎片  强化哈气  回响碎片", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  回响碎片  坚守者回响  回响碎片", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("提示：在工作台按图摆放即可合成（不会出现在原版配方书）。",
+                NamedTextColor.DARK_GRAY));
+        return true;
     }
 
     private boolean showTop(CommandSender sender) {
@@ -259,7 +279,7 @@ public final class HaqiCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            List<String> subs = new ArrayList<>(List.of("top", "debug", "status"));
+            List<String> subs = new ArrayList<>(List.of("top", "debug", "status", "recipe"));
             if (sender.hasPermission("fhw.give")) {
                 subs.add("give");
                 subs.add("giveall");
