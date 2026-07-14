@@ -1,14 +1,5 @@
 package com.freshwater.haqiworld;
 
-import com.freshwater.haqiworld.combat.HaqiCombatEvents;
-import com.freshwater.haqiworld.command.HaqiCommand;
-import com.freshwater.haqiworld.event.PlayerLifecycleHandler;
-import com.freshwater.haqiworld.interaction.HaqiInteractionHandler;
-import com.freshwater.haqiworld.mob.MobHaqiHandler;
-import com.freshwater.haqiworld.network.HaqiNetwork;
-import com.freshwater.haqiworld.registry.ModCreativeTabs;
-import com.freshwater.haqiworld.registry.ModItems;
-import com.freshwater.haqiworld.registry.ModSounds;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
@@ -18,12 +9,8 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
 /**
- * FreshwaterHaqiWorld - "Haqi World Survival".
- *
- * <p>Vanilla melee combat is removed; players fight by "haqi" (breathing into the
- * microphone). Voice volume is read through the Simple Voice Chat plugin API and fires a
- * Warden-style sonic boom whose range and damage scale with loudness and a permanently
- * unlocked haqi tier. Strong mobs can haqi back, and haqi kills feed a leaderboard.
+ * Client-only companion for the Paper plugin. Bundles item/sound assets and the debug
+ * haqi keybind (Plugin Message to the Paper server). All gameplay runs on the Paper plugin.
  */
 @Mod(FreshwaterHaqiWorld.MODID)
 public final class FreshwaterHaqiWorld {
@@ -31,26 +18,12 @@ public final class FreshwaterHaqiWorld {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public FreshwaterHaqiWorld(FMLJavaModLoadingContext context) {
-        var modBusGroup = context.getModBusGroup();
-
-        ModItems.register(modBusGroup);
-        ModSounds.register(modBusGroup);
-        ModCreativeTabs.register(modBusGroup);
-
-        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
-        HaqiNetwork.register();
-
-        HaqiCombatEvents.register();
-        MobHaqiHandler.register();
-        HaqiInteractionHandler.register();
-        PlayerLifecycleHandler.register();
-        HaqiCommand.register();
-
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            com.freshwater.haqiworld.client.HaqiClient.init(modBusGroup);
+        if (FMLEnvironment.dist != Dist.CLIENT) {
+            LOGGER.info("FreshwaterHaqiWorld client mod ignored on dedicated server — use the Paper plugin.");
+            return;
         }
-
-        LOGGER.info("FreshwaterHaqiWorld initialized.");
+        context.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
+        com.freshwater.haqiworld.client.HaqiClient.init(context.getModBusGroup());
+        LOGGER.info("FreshwaterHaqiWorld client companion initialized.");
     }
 }

@@ -1,0 +1,21 @@
+haqi-volume-threshold: 0.12
+haqi-reference-level: 0.18
+require-haqi-item: true
+remove-melee-combat: true
+enable-debug-keybind: true
+debug-keybind-loudness: 1.0
+mobs-can-haqi: true
+mob-haqi-cooldown-ticks: 60
+mob-haqi-damage: 6.0
+leaderboard-size: 10
+
+resource-pack:
+  enabled: true
+  # If blank, plugin hosts the embedded pack on the port below.
+  # Set to a public URL (e.g. GitHub Release asset) for production.
+  url: ""
+  # Host players should download from when url is blank (server public IP / domain).
+  # Leave blank to use 127.0.0.1 (local testing only).
+  host: ""
+  port: 8163
+  force: true

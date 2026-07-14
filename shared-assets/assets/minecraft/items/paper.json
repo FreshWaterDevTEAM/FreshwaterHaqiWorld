@@ -1,0 +1,18 @@
+{
+  "model": {
+    "type": "range_dispatch",
+    "property": "custom_model_data",
+    "index": 0,
+    "entries": [
+      { "threshold": 1001, "model": { "type": "model", "model": "fhw:item/haqi_basic" } },
+      { "threshold": 1002, "model": { "type": "model", "model": "fhw:item/haqi_upgraded" } },
+      { "threshold": 1003, "model": { "type": "model", "model": "fhw:item/haqi_enhanced" } },
+      { "threshold": 1004, "model": { "type": "model", "model": "fhw:item/haqi_warden" } },
+      { "threshold": 1005, "model": { "type": "model", "model": "fhw:item/warden_echo" } }
+    ],
+    "fallback": {
+      "type": "model",
+      "model": "minecraft:item/paper"
+    }
+  }
+}

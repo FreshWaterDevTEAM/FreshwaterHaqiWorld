@@ -7,28 +7,27 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
-description='''${mod_description}'''
+description='''${mod_description} Client companion — assets + debug keybind. Gameplay runs on the Paper plugin.'''
+displayTest="IGNORE_ALL_VERSION"
 
-# Forge
 [[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
     versionRange="${forge_version_range}"
     ordering="NONE"
-    side="BOTH"
+    side="CLIENT"
 
-# Minecraft
 [[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
     versionRange="${minecraft_version_range}"
     ordering="NONE"
-    side="BOTH"
+    side="CLIENT"
 
-# Simple Voice Chat - required for microphone (haqi) input on both sides.
+# SVC is required on the client for real microphone haqi; the Paper plugin handles voice on the server.
 [[dependencies.${mod_id}]]
     modId="voicechat"
     mandatory=true
     versionRange="[2.5,)"
     ordering="AFTER"
-    side="BOTH"
+    side="CLIENT"

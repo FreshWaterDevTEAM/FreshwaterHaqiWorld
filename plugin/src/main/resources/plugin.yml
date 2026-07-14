@@ -1,0 +1,18 @@
+name: FreshwaterHaqiWorld
+version: '${version}'
+main: com.freshwater.haqiworld.plugin.FreshwaterHaqiWorldPlugin
+api-version: '1.21'
+author: Freshwater Island Dev Group
+description: Haqi World Survival - Paper server plugin. Fight with microphone haqi sonic booms.
+depend: [voicechat]
+commands:
+  haqi:
+    description: Haqi leaderboard and unlock commands
+    usage: /haqi <top|unlock>
+    permission: fhw.command
+permissions:
+  fhw.command:
+    default: true
+  fhw.unlock:
+    description: Unlock haqi tiers via command
+    default: op

@@ -1,0 +1,16 @@
+{
+  "item.fhw.haqi_basic": "Haqi",
+  "item.fhw.haqi_upgraded": "Upgraded Haqi",
+  "item.fhw.haqi_enhanced": "Enhanced Haqi",
+  "item.fhw.haqi_warden": "Warden Haqi",
+  "item.fhw.warden_echo": "Warden Echo",
+  "fhw.haqi.unlocked": "You have permanently unlocked the %s haqi!",
+  "fhw.tier.basic": "Basic",
+  "fhw.tier.upgraded": "Upgraded",
+  "fhw.tier.enhanced": "Enhanced",
+  "fhw.tier.warden": "Warden",
+  "subtitles.fhw.haqi_player": "Haqi!",
+  "subtitles.fhw.haqi_mob": "Mob haqi",
+  "subtitles.fhw.haqi_mob_peaceful": "Gentle haqi",
+  "key.fhw.haqi": "Haqi (debug)"
+}

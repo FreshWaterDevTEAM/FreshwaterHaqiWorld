@@ -1,83 +1,51 @@
-# FreshwaterHaqiWorld (哈气世界生存)
+# FreshwaterHaqiWorld 2.0 — Paper 插件 + Forge 客户端
 
-A Minecraft **Forge 1.21.11** mod where vanilla melee combat is removed and you fight by
-**"哈气" (haqi)** — breathing into your microphone. Your voice fires a Warden-style sonic
-boom whose range and damage scale with how loud you are and with your permanently-unlocked
-haqi tier. Strong mobs can haqi back, and every haqi kill is tracked on a leaderboard.
+哈气世界生存：用麦克风哈气发射坚守者风格音波炮。
 
-> Single mod, loaded on **both the client and a dedicated Forge server**. There is no
-> Paper/Bukkit component (Forge mods cannot run on Paper).
+## 架构（v2）
 
-## Requirements
+| 组件 | 安装位置 | 作用 |
+|------|----------|------|
+| **fhw-plugin** | Paper `plugins/` | 全部玩法（语音、音波炮、物品、排行榜…） |
+| **fhw-client** | Forge `mods/` | 内置贴图/音效 + 调试 H 键 |
+| **fhw-resourcepack** | 可选手装 / `resource-pack=` | 与上面同源的独立资源包 |
+| **Simple Voice Chat** | 服务端 Paper 插件 + 客户端模组 | 麦克风 |
 
-- Minecraft **1.21.11**
-- Minecraft **Forge 61.1.1+**
-- **Java 21**
-- **[Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat)** (Forge build for
-  1.21.11) on both client and server — this is a **mandatory dependency** and provides the
-  microphone input.
+> 旧版「纯 Forge 双端模组」已废弃，请用本架构。
 
-## Building
+## 服务端（Paper 1.21.11）
+
+1. 安装 [Simple Voice Chat（Bukkit/Paper）](https://modrinth.com/plugin/simple-voice-chat)
+2. 放入 `fhw-plugin-2.0.0.jar`
+3. 启动后可在 `plugins/FreshwaterHaqiWorld/config.yml` 配置：
+   - `resource-pack.host`：公网 IP/域名（内置 HTTP 推送资源包时用）
+   - 或 `resource-pack.url`：直接填 Release 上的 `fhw-resourcepack` 下载链接（推荐生产环境）
+
+## 客户端（Forge 1.21.11）
+
+1. 安装 Forge 1.21.11 + Simple Voice Chat
+2. 放入 `fhw-client-2.0.0.jar`
+3. （可选）另装资源包；一般客户端模组已内置，服务端也会推送
+
+## 玩法
+
+- 对着麦克风哈气 → 音波炮；音量影响射程与伤害
+- 需手持哈气物品；蹲下右键哈气物品可永久解锁该阶
+- 合成：铁锭围基础哈气 → 升级；钻石围升级 → 强化；坚守者回响围强化 → 坚守者哈气
+- 击杀坚守者掉落回响
+- 铁傀儡 / 凋零骷髅 / 蛮兵 / 末影龙会音波炮
+- `/haqi top` 排行榜；`/haqi unlock <tier>`（OP）
+
+调试：按住 **H**（需客户端模组）模拟满响度哈气。
+
+## 构建
 
 ```bash
 ./gradlew build
 ```
 
-The mod jar is produced at `build/libs/fhw-1.0.0.jar`.
+产物在 `build/release/`：
 
-For a development client/server (drop the Simple Voice Chat jar into `run/mods` first):
-
-```bash
-./gradlew runClient
-./gradlew runServer
-```
-
-## How to play
-
-1. Install this mod **and** Simple Voice Chat on the client and server.
-2. You start with a **哈气 (Haqi)** item and the Basic tier unlocked.
-3. Hold a haqi item and **speak/shout into your mic** — the louder you are, the longer and
-   stronger the sonic boom. Vanilla weapons no longer deal damage to mobs.
-4. **Upgrade** by crafting a stronger haqi (ore ring around your current haqi), then
-   **sneak + right-click** it to *permanently* unlock that tier (the item is consumed).
-   The unlock is kept even if you lose the item or die.
-5. Run `/haqi top` to see the multiplayer kill leaderboard.
-
-### Haqi tiers
-
-| Item             | Recipe (ring around base)        | Comparable to | Damage* | Cooldown |
-|------------------|----------------------------------|---------------|---------|----------|
-| `哈气` (basic)    | (starter / creative)             | Stone sword   | 5       | 30t      |
-| 升级哈气 (upgraded)| 8× Iron Ingot + 哈气             | Iron sword    | 6       | 26t      |
-| 强化哈气 (enhanced)| 8× Diamond + 升级哈气            | Diamond sword | 7       | 22t      |
-| 坚守者哈气 (warden)| 8× Warden Echo + 强化哈气        | End-game      | 10      | 18t      |
-
-*Damage shown is the maximum (full-volume haqi); quiet haqi deals less. `Warden Echo` is
-dropped by killing a **Warden**.
-
-### Mobs that haqi back
-
-Iron Golems, Wither Skeletons, Vindicators and the Ender Dragon fire their own sonic booms
-at their targets. Most other mobs just emit cosmetic haqi sounds.
-
-## Debug keybind (no microphone needed)
-
-Press **H** (rebindable) to simulate a full-volume haqi while held — handy for testing
-without speaking. Toggle off via the `enableDebugKeybind` config option.
-
-## Configuration
-
-See `config/fhw-common.toml` after first launch. Notable options:
-
-- `haqiVolumeThreshold` / `haqiReferenceLevel` — mic sensitivity.
-- `requireHaqiItem` — must hold a haqi item to fire.
-- `removeMeleeCombat` — cancel player melee weapon damage.
-- `mobsCanHaqi`, `mobHaqiCooldownTicks`, `mobHaqiDamage` — strong-mob booms.
-- `leaderboardSize` — entries shown by `/haqi top`.
-
-## Notes on placeholder assets
-
-Item textures, the cosmetic haqi sounds (`fhw:haqi_player`, `fhw:haqi_mob`) are placeholders
-(the mob/player sounds currently reuse vanilla Warden sounds). Drop real `.png` textures into
-`assets/fhw/textures/item/` and real `.ogg` files referenced by `assets/fhw/sounds.json` to
-replace them — no code changes required.
+- `fhw-plugin-2.0.0.jar`
+- `fhw-client-2.0.0.jar`
+- `fhw-resourcepack-2.0.0.zip`

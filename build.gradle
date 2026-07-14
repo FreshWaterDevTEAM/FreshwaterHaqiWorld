@@ -9,7 +9,7 @@ plugins {
 
 version = mod_version
 group = mod_group_id
-base.archivesName = mod_id
+base.archivesName = 'fhw-client'
 
 // Mojang ships Java 21 to end users in 1.20.5 - 1.21.11, so your mod should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -109,9 +109,8 @@ dependencies {
     // in your development environment, helping you catch issues early.
     annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.5'
 
-    // Simple Voice Chat plugin API. Compile-time only: the actual implementation is
-    // provided at runtime by the Simple Voice Chat mod the player installs.
-    compileOnly "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
+    // Simple Voice Chat is a runtime client dependency (declared in mods.toml); no compile API needed for the slim client.
+    //compileOnly "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
 
     // Example mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -139,6 +138,7 @@ tasks.withType(JavaCompile).configureEach {
 // When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
 // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
 tasks.named('processResources', ProcessResources) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     var replaceProperties = [
         minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
         forge_version: forge_version, forge_version_range: forge_version_range,
@@ -151,6 +151,74 @@ tasks.named('processResources', ProcessResources) {
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
     }
+
+    // Shared CustomModelData pack (same content as Paper plugin / Release zip)
+    from(rootProject.file('shared-assets')) {
+        include 'assets/**'
+        include 'pack.mcmeta'
+    }
+}
+
+tasks.register('zipResourcePack', Zip) {
+    archiveBaseName = 'fhw-resourcepack'
+    archiveVersion = mod_version
+    destinationDirectory = layout.buildDirectory.dir('libs')
+    from(rootProject.file('shared-assets')) {
+        include 'pack.mcmeta'
+        include 'assets/**'
+    }
+}
+
+tasks.register('collectReleaseArtifacts', Copy) {
+    dependsOn 'jarJar', 'zipResourcePack', ':plugin:jar'
+    from(layout.buildDirectory.file("libs/fhw-client-${mod_version}.jar"))
+    from(project(':plugin').layout.buildDirectory.file("libs/fhw-plugin-${version}.jar").map { it }.orElse(
+            project(':plugin').tasks.named('jar').flatMap { it.archiveFile }
+    ))
+    from(tasks.named('zipResourcePack').flatMap { it.archiveFile })
+    into layout.buildDirectory.dir('release')
+    doFirst {
+        // Resolve plugin jar from its jar task output
+    }
+}
+
+// Simpler collect after known artifacts exist
+tasks.register('packageRelease') {
+    dependsOn 'jarJar', 'zipResourcePack', ':plugin:jar'
+    doLast {
+        def out = layout.buildDirectory.dir('release').get().asFile
+        out.mkdirs()
+        def clientJar = layout.buildDirectory.file("libs/fhw-client-${mod_version}.jar").get().asFile
+        if (!clientJar.exists()) {
+            // jarJar may name without classifier
+            def alt = fileTree(layout.buildDirectory.dir('libs')) { include 'fhw-client*.jar'; exclude '*slim*' }.files
+            if (alt.isEmpty()) throw new GradleException('client jar not found in build/libs')
+            clientJar = alt.iterator().next()
+        }
+        def pluginJar = project(':plugin').tasks.named('jar', Jar).get().archiveFile.get().asFile
+        def packZip = tasks.named('zipResourcePack', Zip).get().archiveFile.get().asFile
+        copy {
+            from clientJar
+            into out
+            rename { "fhw-client-${mod_version}.jar" }
+        }
+        copy {
+            from pluginJar
+            into out
+            rename { "fhw-plugin-${mod_version}.jar" }
+        }
+        copy {
+            from packZip
+            into out
+            rename { "fhw-resourcepack-${mod_version}.zip" }
+        }
+        println "Release artifacts -> ${out}"
+        out.listFiles().each { println "  ${it.name}" }
+    }
+}
+
+tasks.named('build') {
+    finalizedBy 'packageRelease'
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
