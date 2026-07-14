@@ -24,10 +24,10 @@ displayTest="IGNORE_ALL_VERSION"
     ordering="NONE"
     side="CLIENT"
 
-# SVC is required on the client for real microphone haqi; the Paper plugin handles voice on the server.
+# SVC versions look like "1.21.11-2.6.20" (MC version prefix), so "[2.5,)" incorrectly rejects them.
 [[dependencies.${mod_id}]]
     modId="voicechat"
     mandatory=true
-    versionRange="[2.5,)"
+    versionRange="[1.21.11-2.5,)"
     ordering="AFTER"
     side="CLIENT"

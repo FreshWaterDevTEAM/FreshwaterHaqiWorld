@@ -16,7 +16,7 @@
 ## 服务端（Paper 1.21.11）
 
 1. 安装 [Simple Voice Chat（Bukkit/Paper）](https://modrinth.com/plugin/simple-voice-chat)
-2. 放入 `fhw-plugin-2.0.0.jar`
+2. 放入 `fhw-plugin-2.0.1.jar`
 3. 启动后可在 `plugins/FreshwaterHaqiWorld/config.yml` 配置：
    - `resource-pack.host`：公网 IP/域名（内置 HTTP 推送资源包时用）
    - 或 `resource-pack.url`：直接填 Release 上的 `fhw-resourcepack` 下载链接（推荐生产环境）
@@ -24,7 +24,7 @@
 ## 客户端（Forge 1.21.11）
 
 1. 安装 Forge 1.21.11 + Simple Voice Chat
-2. 放入 `fhw-client-2.0.0.jar`
+2. 放入 `fhw-client-2.0.1.jar`
 3. （可选）另装资源包；一般客户端模组已内置，服务端也会推送
 
 ## 玩法
@@ -46,6 +46,6 @@
 
 产物在 `build/release/`：
 
-- `fhw-plugin-2.0.0.jar`
-- `fhw-client-2.0.0.jar`
-- `fhw-resourcepack-2.0.0.zip`
+- `fhw-plugin-2.0.1.jar`
+- `fhw-client-2.0.1.jar`
+- `fhw-resourcepack-2.0.1.zip`

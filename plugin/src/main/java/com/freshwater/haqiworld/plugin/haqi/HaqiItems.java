@@ -7,12 +7,17 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public final class HaqiItems {
     public static NamespacedKey KEY_HAQI_ITEM;
@@ -28,7 +33,7 @@ public final class HaqiItems {
 
     public static ItemStack createHaqi(HaqiTier tier) {
         ItemStack stack = new ItemStack(Material.PAPER);
-        ItemMeta meta = stack.getItemMeta();
+        ItemMeta meta = requireMeta(stack);
         meta.getPersistentDataContainer().set(KEY_HAQI_ITEM, PersistentDataType.STRING, tier.id());
         meta.setCustomModelData(tier.customModelData());
         meta.displayName(Component.translatable("item.fhw.haqi_" + tier.id())
@@ -44,7 +49,7 @@ public final class HaqiItems {
 
     public static ItemStack createWardenEcho() {
         ItemStack stack = new ItemStack(Material.PAPER);
-        ItemMeta meta = stack.getItemMeta();
+        ItemMeta meta = requireMeta(stack);
         meta.getPersistentDataContainer().set(KEY_WARDEN_ECHO, PersistentDataType.BYTE, (byte) 1);
         meta.setCustomModelData(HaqiTier.WARDEN_ECHO_CMD);
         meta.displayName(Component.translatable("item.fhw.warden_echo")
@@ -55,18 +60,26 @@ public final class HaqiItems {
     }
 
     public static HaqiTier getHaqiTier(ItemStack stack) {
-        if (stack == null || !stack.hasItemMeta()) {
+        if (stack == null) {
             return null;
         }
-        String id = stack.getItemMeta().getPersistentDataContainer().get(KEY_HAQI_ITEM, PersistentDataType.STRING);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return null;
+        }
+        String id = meta.getPersistentDataContainer().get(KEY_HAQI_ITEM, PersistentDataType.STRING);
         return id == null ? null : HaqiTier.byId(id);
     }
 
     public static boolean isWardenEcho(ItemStack stack) {
-        if (stack == null || !stack.hasItemMeta()) {
+        if (stack == null) {
             return false;
         }
-        Byte v = stack.getItemMeta().getPersistentDataContainer().get(KEY_WARDEN_ECHO, PersistentDataType.BYTE);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+        Byte v = meta.getPersistentDataContainer().get(KEY_WARDEN_ECHO, PersistentDataType.BYTE);
         return v != null && v == 1;
     }
 
@@ -93,24 +106,60 @@ public final class HaqiItems {
     public static void registerRecipes(JavaPlugin plugin) {
         registerUpgrade(plugin, "haqi_upgraded", HaqiTier.BASIC, HaqiTier.UPGRADED, Material.IRON_INGOT);
         registerUpgrade(plugin, "haqi_enhanced", HaqiTier.UPGRADED, HaqiTier.ENHANCED, Material.DIAMOND);
-        // Warden: center enhanced, surround warden echo — use recipe choice matching PDC via exact item
-        ItemStack center = createHaqi(HaqiTier.ENHANCED);
+
         ItemStack result = createHaqi(HaqiTier.WARDEN);
-        ItemStack echo = createWardenEcho();
         ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, "haqi_warden"), result);
         recipe.shape("EEE", "EHE", "EEE");
-        recipe.setIngredient('H', center);
-        recipe.setIngredient('E', echo);
+        recipe.setIngredient('H', pdcChoice(createHaqi(HaqiTier.ENHANCED),
+                stack -> getHaqiTier(stack) == HaqiTier.ENHANCED));
+        recipe.setIngredient('E', pdcChoice(createWardenEcho(), HaqiItems::isWardenEcho));
         plugin.getServer().addRecipe(recipe);
     }
 
     private static void registerUpgrade(JavaPlugin plugin, String key, HaqiTier from, HaqiTier to, Material surround) {
-        ItemStack center = createHaqi(from);
         ItemStack result = createHaqi(to);
         ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, key), result);
         recipe.shape("SSS", "SHS", "SSS");
-        recipe.setIngredient('H', center);
-        recipe.setIngredient('S', surround);
+        recipe.setIngredient('H', pdcChoice(createHaqi(from), stack -> getHaqiTier(stack) == from));
+        recipe.setIngredient('S', new RecipeChoice.MaterialChoice(surround));
         plugin.getServer().addRecipe(recipe);
+    }
+
+    private static ItemMeta requireMeta(ItemStack stack) {
+        return Objects.requireNonNull(stack.getItemMeta(),
+                "ItemMeta unavailable for " + stack.getType());
+    }
+
+    /**
+     * Matches ingredients by our PDC tags only (not ExactChoice), so display name / lore /
+     * component churn cannot silently break crafting.
+     */
+    private static RecipeChoice pdcChoice(ItemStack example, Predicate<ItemStack> matcher) {
+        return new PdcRecipeChoice(example, matcher);
+    }
+
+    private static final class PdcRecipeChoice implements RecipeChoice {
+        private final ItemStack example;
+        private final Predicate<ItemStack> matcher;
+
+        private PdcRecipeChoice(ItemStack example, Predicate<ItemStack> matcher) {
+            this.example = example.clone();
+            this.matcher = matcher;
+        }
+
+        @Override
+        public @NotNull ItemStack getItemStack() {
+            return example.clone();
+        }
+
+        @Override
+        public @NotNull RecipeChoice clone() {
+            return new PdcRecipeChoice(example, matcher);
+        }
+
+        @Override
+        public boolean test(@Nullable ItemStack itemStack) {
+            return itemStack != null && !itemStack.getType().isAir() && matcher.test(itemStack);
+        }
     }
 }
