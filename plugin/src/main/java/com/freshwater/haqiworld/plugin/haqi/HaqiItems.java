@@ -78,6 +78,30 @@ public final class HaqiItems {
         return v != null && v == 1;
     }
 
+    public static boolean isHaqiRelated(ItemStack stack) {
+        return getHaqiTier(stack) != null || isWardenEcho(stack);
+    }
+
+    /** Removes all haqi items and warden echoes from inventory. Returns amount removed. */
+    public static int clearHaqiItems(org.bukkit.entity.Player player) {
+        int removed = 0;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack stack = contents[i];
+            if (isHaqiRelated(stack)) {
+                removed += stack.getAmount();
+                contents[i] = null;
+            }
+        }
+        player.getInventory().setContents(contents);
+        ItemStack cursor = player.getItemOnCursor();
+        if (isHaqiRelated(cursor)) {
+            removed += cursor.getAmount();
+            player.setItemOnCursor(null);
+        }
+        return removed;
+    }
+
     public static HaqiTier heldHaqiTier(org.bukkit.entity.Player player) {
         HaqiTier main = getHaqiTier(player.getInventory().getItemInMainHand());
         if (main != null) {
@@ -100,7 +124,10 @@ public final class HaqiItems {
 
     /**
      * Resolves a workbench 3x3 matrix into an upgrade result (PDC-based, no Bukkit RecipeChoice).
-     * Pattern: surround ore/echo around a lower-tier haqi in the center.
+     * Patterns:
+     * - iron around basic → upgraded
+     * - diamond around upgraded → enhanced
+     * - echo shards around enhanced, with warden echo at bottom-center → warden
      */
     public static ItemStack matchUpgradeResult(ItemStack[] matrix) {
         if (matrix == null || matrix.length < 9) {
@@ -119,7 +146,10 @@ public final class HaqiItems {
         if (centerTier == HaqiTier.UPGRADED && allMatchMaterial(matrix, surround, Material.DIAMOND)) {
             return createHaqi(HaqiTier.ENHANCED);
         }
-        if (centerTier == HaqiTier.ENHANCED && allMatchWardenEcho(matrix, surround)) {
+        // Warden: enhanced in center, warden echo bottom-middle, echo shards in the other 7 slots
+        if (centerTier == HaqiTier.ENHANCED
+                && isWardenEcho(matrix[7])
+                && allMatchMaterial(matrix, new int[]{0, 1, 2, 3, 5, 6, 8}, Material.ECHO_SHARD)) {
             return createHaqi(HaqiTier.WARDEN);
         }
         return null;
@@ -129,15 +159,6 @@ public final class HaqiItems {
         for (int slot : slots) {
             ItemStack stack = matrix[slot];
             if (stack == null || stack.getType() != material) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean allMatchWardenEcho(ItemStack[] matrix, int[] slots) {
-        for (int slot : slots) {
-            if (!isWardenEcho(matrix[slot])) {
                 return false;
             }
         }

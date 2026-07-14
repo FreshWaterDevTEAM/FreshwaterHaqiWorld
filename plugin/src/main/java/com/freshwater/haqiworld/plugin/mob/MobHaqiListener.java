@@ -9,6 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vindicator;
+import org.bukkit.entity.Warden;
 import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -64,9 +65,11 @@ public final class MobHaqiListener implements Listener {
         return mob instanceof IronGolem
                 || mob instanceof WitherSkeleton
                 || mob instanceof Vindicator
+                || mob instanceof Warden
                 || mob.getType() == EntityType.IRON_GOLEM
                 || mob.getType() == EntityType.WITHER_SKELETON
-                || mob.getType() == EntityType.VINDICATOR;
+                || mob.getType() == EntityType.VINDICATOR
+                || mob.getType() == EntityType.WARDEN;
     }
 
     private void tickMob(Mob mob) {
@@ -89,9 +92,12 @@ public final class MobHaqiListener implements Listener {
         }
         Vector dir = target.getEyeLocation().toVector().subtract(mob.getEyeLocation().toVector());
         double range = Math.min(MAX_RANGE, dir.length() + 2.0);
+        float damage = mob instanceof Warden
+                ? (float) config.wardenHaqiDamage
+                : (float) config.mobHaqiDamage;
         mob.getWorld().playSound(mob.getLocation(), "fhw:haqi_mob", SoundCategory.HOSTILE,
                 1.5F, 0.8F + (float) (Math.random() * 0.3));
-        SonicBoomService.fire(mob, mob.getEyeLocation(), dir, range, BEAM_RADIUS, (float) config.mobHaqiDamage);
+        SonicBoomService.fire(mob, mob.getEyeLocation(), dir, range, BEAM_RADIUS, damage);
         cooldowns.put(id, config.mobHaqiCooldownTicks);
     }
 

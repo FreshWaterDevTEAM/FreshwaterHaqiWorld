@@ -61,7 +61,7 @@ public final class HaqiAttackTask extends BukkitRunnable {
         HaqiTier tier = HaqiItems.resolveCombatTier(player, config.requireHaqiItem);
         if (tier == null) {
             if (hintCd <= 0) {
-                player.sendActionBar(Component.text("请手持哈气物品再哈气（/haqi give）", NamedTextColor.RED));
+                player.sendActionBar(Component.text("请手持哈气物品再哈气", NamedTextColor.RED));
                 noItemHintCooldown.put(id, 40);
             }
             return;

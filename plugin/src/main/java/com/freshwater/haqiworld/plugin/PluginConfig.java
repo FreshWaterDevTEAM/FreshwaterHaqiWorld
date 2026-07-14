@@ -16,6 +16,7 @@ public final class PluginConfig {
     public final boolean mobsCanHaqi;
     public final int mobHaqiCooldownTicks;
     public final double mobHaqiDamage;
+    public final double wardenHaqiDamage;
     public final int leaderboardSize;
     public final boolean resourcePackEnabled;
     public final String resourcePackUrl;
@@ -37,6 +38,7 @@ public final class PluginConfig {
         mobsCanHaqi = c.getBoolean("mobs-can-haqi", true);
         mobHaqiCooldownTicks = c.getInt("mob-haqi-cooldown-ticks", 60);
         mobHaqiDamage = c.getDouble("mob-haqi-damage", 6.0);
+        wardenHaqiDamage = c.getDouble("warden-haqi-damage", 12.0);
         leaderboardSize = c.getInt("leaderboard-size", 10);
         resourcePackEnabled = c.getBoolean("resource-pack.enabled", false);
         resourcePackUrl = c.getString("resource-pack.url", "");

@@ -93,6 +93,12 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
             changed = true;
             getLogger().info("Config revision 8: relative AGC loudness (fixes stuck ~0.001).");
         }
+        if (c.getInt("fhw-config-revision", 0) < 9) {
+            c.set("warden-haqi-damage", 12.0);
+            c.set("fhw-config-revision", 9);
+            changed = true;
+            getLogger().info("Config revision 9: warden mob haqi damage = 12.");
+        }
         if (!c.contains("loudness-gain")) {
             c.set("loudness-gain", 2.5);
             changed = true;

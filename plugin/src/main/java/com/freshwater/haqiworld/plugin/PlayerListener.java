@@ -27,7 +27,7 @@ public final class PlayerListener implements Listener {
             PlayerData.setStarterGiven(player);
         }
         player.sendMessage(net.kyori.adventure.text.Component.text(
-                "[哈气] 手持哈气物品后对着麦克风哈气；物品不足用 /haqi give；调试按住 H；状态 /haqi status",
+                "[哈气] 手持哈气物品后对着麦克风哈气；状态 /haqi status；调试按住 H",
                 net.kyori.adventure.text.format.NamedTextColor.AQUA));
     }
 

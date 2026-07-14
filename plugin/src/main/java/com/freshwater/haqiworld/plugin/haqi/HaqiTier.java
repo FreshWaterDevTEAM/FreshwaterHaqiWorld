@@ -1,6 +1,7 @@
 package com.freshwater.haqiworld.plugin.haqi;
 
 public enum HaqiTier {
+    /** Max damage at full loudness is {@code baseDamage} (basic = 5). */
     BASIC(0, "basic", 5.0F, 30, 7.0D, 12.0D, 1.6D),
     UPGRADED(1, "upgraded", 6.0F, 26, 9.0D, 16.0D, 1.9D),
     ENHANCED(2, "enhanced", 7.0F, 22, 11.0D, 20.0D, 2.2D),
