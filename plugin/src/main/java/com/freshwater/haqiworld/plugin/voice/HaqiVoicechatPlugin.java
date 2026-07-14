@@ -65,10 +65,9 @@ public final class HaqiVoicechatPlugin implements VoicechatPlugin {
         OpusDecoder decoder = decoders.computeIfAbsent(playerId, id -> localApi.createDecoder());
         try {
             short[] pcm = decoder.decode(opus);
-            float loudness = VoiceManager.computeLoudness(pcm, config.haqiReferenceLevel);
+            float loudness = VoiceManager.computeLoudness(
+                    pcm, config.haqiReferenceLevel, config.loudnessGain);
 
-            // SVC only sends non-empty opus while the client thinks you are talking.
-            // Boost so soft speech still clears the haqi threshold.
             if (config.voiceActivationBoost) {
                 loudness = Math.max(loudness, (float) config.voiceActivationMinLoudness);
             }

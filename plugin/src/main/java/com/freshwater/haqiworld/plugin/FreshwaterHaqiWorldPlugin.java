@@ -84,6 +84,19 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
     private void ensureNewConfigKeys() {
         var c = getConfig();
         boolean changed = false;
+        if (c.getInt("fhw-config-revision", 0) < 7) {
+            c.set("voice-activation-boost", false);
+            c.set("haqi-volume-threshold", 0.04);
+            c.set("haqi-reference-level", 0.10);
+            c.set("loudness-gain", 2.5);
+            c.set("fhw-config-revision", 7);
+            changed = true;
+            getLogger().info("Config revision 7: dynamic haqi — soft=weak, loud=strong.");
+        }
+        if (!c.contains("loudness-gain")) {
+            c.set("loudness-gain", 2.5);
+            changed = true;
+        }
         if (!c.contains("voice-activation-boost")) {
             c.set("voice-activation-boost", false);
             changed = true;
@@ -91,15 +104,6 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
         if (!c.contains("voice-activation-min-loudness")) {
             c.set("voice-activation-min-loudness", 0.55);
             changed = true;
-        }
-        // One-time migrate away from 2.0.4's oversensitive defaults.
-        if (c.getInt("fhw-config-revision", 0) < 5) {
-            c.set("voice-activation-boost", false);
-            c.set("haqi-volume-threshold", 0.12);
-            c.set("haqi-reference-level", 0.15);
-            c.set("fhw-config-revision", 5);
-            changed = true;
-            getLogger().info("Config revision 5: haqi uses real mic loudness again (not soft-voice boost).");
         }
         if (changed) {
             saveConfig();

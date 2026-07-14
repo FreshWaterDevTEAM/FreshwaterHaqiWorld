@@ -43,12 +43,19 @@ public enum HaqiTier {
 
     public float damageFor(float loudness) {
         float l = Math.max(0.0F, Math.min(1.0F, loudness));
-        return baseDamage * (0.4F + 0.6F * l);
+        // Soft breath ≈ 20% damage, full shout ≈ 100%
+        return baseDamage * (0.20F + 0.80F * l);
     }
 
     public double rangeFor(float loudness) {
         float l = Math.max(0.0F, Math.min(1.0F, loudness));
         return minRange + (maxRange - minRange) * l;
+    }
+
+    /** Beam widens a little with louder haqi. */
+    public double beamRadiusFor(float loudness) {
+        float l = Math.max(0.0F, Math.min(1.0F, loudness));
+        return beamRadius * (0.75 + 0.25 * l);
     }
 
     public static HaqiTier byLevel(int level) {

@@ -56,13 +56,6 @@ public final class HaqiAttackTask extends BukkitRunnable {
             return;
         }
         if (!VoiceManager.get().isHaqiing(id, config)) {
-            float loudness = VoiceManager.get().getLoudness(id);
-            if (loudness > 0.001F && hintCd <= 0) {
-                player.sendActionBar(Component.text(
-                        String.format("听到声音了(%.2f)但未达阈值 — 再大声点或检查是否手持哈气", loudness),
-                        NamedTextColor.YELLOW));
-                noItemHintCooldown.put(id, 30);
-            }
             return;
         }
         HaqiTier tier = HaqiItems.resolveCombatTier(player, config.requireHaqiItem);
@@ -82,13 +75,16 @@ public final class HaqiAttackTask extends BukkitRunnable {
         Vector dir = player.getEyeLocation().getDirection();
         double range = tier.rangeFor(loudness);
         float damage = tier.damageFor(loudness);
+        double radius = tier.beamRadiusFor(loudness);
 
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WARDEN_SONIC_CHARGE,
-                SoundCategory.PLAYERS, 1.0F, 1.0F);
-        player.getWorld().playSound(player.getLocation(), "fhw:haqi_player", SoundCategory.PLAYERS, 1.0F, 1.0F);
+                SoundCategory.PLAYERS, 0.6F + loudness * 0.6F, 1.1F - loudness * 0.2F);
+        player.getWorld().playSound(player.getLocation(), "fhw:haqi_player", SoundCategory.PLAYERS,
+                0.5F + loudness * 0.7F, 1.0F);
 
-        SonicBoomService.fire(player, player.getEyeLocation(), dir, range, tier.beamRadius(), damage);
-        player.sendActionBar(Component.text(String.format("哈气！ 伤害%.1f 射程%.0f", damage, range),
+        SonicBoomService.fire(player, player.getEyeLocation(), dir, range, radius, damage);
+        player.sendActionBar(Component.text(
+                String.format("哈气 %.0f%%  伤害%.1f  射程%.0f", loudness * 100.0F, damage, range),
                 NamedTextColor.AQUA));
     }
 

@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class PluginConfig {
     public final double haqiVolumeThreshold;
     public final double haqiReferenceLevel;
+    public final double loudnessGain;
     public final boolean voiceActivationBoost;
     public final double voiceActivationMinLoudness;
     public final boolean requireHaqiItem;
@@ -24,8 +25,9 @@ public final class PluginConfig {
 
     public PluginConfig(JavaPlugin plugin) {
         FileConfiguration c = plugin.getConfig();
-        haqiVolumeThreshold = c.getDouble("haqi-volume-threshold", 0.12);
-        haqiReferenceLevel = c.getDouble("haqi-reference-level", 0.15);
+        haqiVolumeThreshold = c.getDouble("haqi-volume-threshold", 0.04);
+        haqiReferenceLevel = c.getDouble("haqi-reference-level", 0.10);
+        loudnessGain = c.getDouble("loudness-gain", 2.5);
         voiceActivationBoost = c.getBoolean("voice-activation-boost", false);
         voiceActivationMinLoudness = c.getDouble("voice-activation-min-loudness", 0.55);
         requireHaqiItem = c.getBoolean("require-haqi-item", true);
