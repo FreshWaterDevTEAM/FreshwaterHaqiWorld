@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "D": "minecraft:diamond",
+    "H": "fhw:haqi_upgraded"
+  },
+  "pattern": [
+    "DDD",
+    "DHD",
+    "DDD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "fhw:haqi_enhanced"
+  }
+}

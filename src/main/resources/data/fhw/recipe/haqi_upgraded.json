@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "H": "fhw:haqi_basic"
+  },
+  "pattern": [
+    "III",
+    "IHI",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "fhw:haqi_upgraded"
+  }
+}

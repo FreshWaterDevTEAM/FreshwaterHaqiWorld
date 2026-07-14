@@ -1,0 +1,41 @@
+{
+  "haqi_player": {
+    "subtitle": "subtitles.fhw.haqi_player",
+    "sounds": [
+      {
+        "name": "fhw:haqi_player_1",
+        "stream": false
+      },
+      {
+        "name": "fhw:haqi_player_2",
+        "stream": false
+      }
+    ]
+  },
+  "haqi_mob": {
+    "subtitle": "subtitles.fhw.haqi_mob",
+    "sounds": [
+      {
+        "name": "fhw:haqi_hostile_1",
+        "stream": false
+      },
+      {
+        "name": "fhw:haqi_hostile_2",
+        "stream": false
+      },
+      {
+        "name": "fhw:haqi_hostile_3",
+        "stream": false
+      }
+    ]
+  },
+  "haqi_mob_peaceful": {
+    "subtitle": "subtitles.fhw.haqi_mob_peaceful",
+    "sounds": [
+      {
+        "name": "fhw:haqi_peaceful",
+        "stream": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "itemGroup.fhw.haqi": "Haqi World",
+  "item.fhw.haqi_basic": "Haqi",
+  "item.fhw.haqi_upgraded": "Upgraded Haqi",
+  "item.fhw.haqi_enhanced": "Enhanced Haqi",
+  "item.fhw.haqi_warden": "Warden Haqi",
+  "item.fhw.warden_echo": "Warden Echo",
+  "key.fhw.haqi": "Haqi (debug)",
+  "key.categories.fhw": "FreshwaterHaqiWorld",
+  "fhw.haqi.unlocked": "You have permanently unlocked the %s haqi!",
+  "fhw.haqi.already_unlocked": "You already mastered a haqi this strong.",
+  "fhw.tier.basic": "Basic",
+  "fhw.tier.upgraded": "Upgraded",
+  "fhw.tier.enhanced": "Enhanced",
+  "fhw.tier.warden": "Warden",
+  "fhw.leaderboard.header": "=== Haqi Kill Leaderboard ===",
+  "fhw.leaderboard.entry": "%s. %s - %s kills",
+  "fhw.leaderboard.empty": "No haqi kills recorded yet.",
+  "subtitles.fhw.haqi_player": "Haqi!",
+  "subtitles.fhw.haqi_mob": "Mob haqi",
+  "subtitles.fhw.haqi_mob_peaceful": "Gentle haqi"
+}
