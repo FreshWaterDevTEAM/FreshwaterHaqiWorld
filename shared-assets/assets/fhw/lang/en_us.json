@@ -1,9 +1,9 @@
 {
-  "item.fhw.haqi_basic": "Haqi",
+  "item.fhw.haqi_basic": "Basic Haqi",
   "item.fhw.haqi_upgraded": "Upgraded Haqi",
   "item.fhw.haqi_enhanced": "Enhanced Haqi",
   "item.fhw.haqi_warden": "Warden Haqi",
-  "item.fhw.warden_echo": "Warden Echo",
+  "item.fhw.warden_echo": "Warden Stone",
   "fhw.haqi.unlocked": "You have permanently unlocked the %s haqi!",
   "fhw.tier.basic": "Basic",
   "fhw.tier.upgraded": "Upgraded",

@@ -16,7 +16,7 @@
 ## 服务端（Paper 1.21.11）
 
 1. 安装 [Simple Voice Chat（Bukkit/Paper）](https://modrinth.com/plugin/simple-voice-chat)
-2. 放入 `fhw-plugin-2.0.9.jar`
+2. 放入 `fhw-plugin-2.0.10.jar`
 3. 启动后可在 `plugins/FreshwaterHaqiWorld/config.yml` 配置：
    - `resource-pack.host`：公网 IP/域名（内置 HTTP 推送资源包时用）
    - 或 `resource-pack.url`：直接填 Release 上的 `fhw-resourcepack` 下载链接（推荐生产环境）
@@ -24,15 +24,15 @@
 ## 客户端（Forge 1.21.11）
 
 1. 安装 Forge 1.21.11 + Simple Voice Chat
-2. 放入 `fhw-client-2.0.9.jar`
+2. 放入 `fhw-client-2.0.10.jar`
 3. （可选）另装资源包；一般客户端模组已内置，服务端也会推送
 
 ## 玩法
 
 - 对着麦克风哈气 → 音波炮；音量影响射程与伤害
 - 需手持哈气物品；蹲下右键哈气物品可永久解锁该阶
-- 合成：铁锭围基础哈气 → 升级；钻石围升级 → 强化；强化哈气 + 底中坚守者回响 + 其余 7 格回响碎片 → 坚守者哈气
-- 击杀坚守者掉落回响（坚守者回响）
+- 合成：铁锭围基础哈气 → 升级；钻石围升级 → 强化；强化哈气 + 底中坚守者石块 + 其余 7 格回响碎片 → 坚守者哈气
+- 击杀坚守者掉落坚守者石块
 - 铁傀儡 / 凋零骷髅 / 蛮兵 / 坚守者 / 末影龙会音波炮（坚守者伤害 12；基础哈气物品满响度最多 5）
 - `/haqi recipe` 查看合成配方；`/haqi top` 排行榜；`/haqi status` 状态
 - OP：`/haqi give`、`/haqi giveall`（全员基础哈气）、`/haqi clear [玩家|all]`（清物品并退回 basic）、`/haqi unlock <tier>`
@@ -47,6 +47,6 @@
 
 产物在 `build/release/`：
 
-- `fhw-plugin-2.0.9.jar`
-- `fhw-client-2.0.9.jar`
-- `fhw-resourcepack-2.0.9.zip`
+- `fhw-plugin-2.0.10.jar`
+- `fhw-client-2.0.10.jar`
+- `fhw-resourcepack-2.0.10.zip`

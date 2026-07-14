@@ -79,7 +79,7 @@ public final class HaqiCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(Component.text("坚守者哈气", NamedTextColor.AQUA));
         sender.sendMessage(Component.text("  回响碎片  回响碎片  回响碎片", NamedTextColor.GRAY));
         sender.sendMessage(Component.text("  回响碎片  强化哈气  回响碎片", NamedTextColor.GRAY));
-        sender.sendMessage(Component.text("  回响碎片  坚守者回响  回响碎片", NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  回响碎片  坚守者石块  回响碎片", NamedTextColor.GRAY));
         sender.sendMessage(Component.text("提示：在工作台按图摆放即可合成（不会出现在原版配方书）。",
                 NamedTextColor.DARK_GRAY));
         return true;

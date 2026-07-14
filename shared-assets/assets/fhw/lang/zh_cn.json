@@ -1,9 +1,9 @@
 {
-  "item.fhw.haqi_basic": "哈气",
+  "item.fhw.haqi_basic": "基础哈气",
   "item.fhw.haqi_upgraded": "升级哈气",
   "item.fhw.haqi_enhanced": "强化哈气",
   "item.fhw.haqi_warden": "坚守者哈气",
-  "item.fhw.warden_echo": "坚守者回响",
+  "item.fhw.warden_echo": "坚守者石块",
   "fhw.haqi.unlocked": "你已永久解锁了%s哈气！",
   "fhw.tier.basic": "普通",
   "fhw.tier.upgraded": "升级",
