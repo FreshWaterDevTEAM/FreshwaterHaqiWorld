@@ -7,17 +7,12 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 public final class HaqiItems {
     public static NamespacedKey KEY_HAQI_ITEM;
@@ -60,7 +55,7 @@ public final class HaqiItems {
     }
 
     public static HaqiTier getHaqiTier(ItemStack stack) {
-        if (stack == null) {
+        if (stack == null || stack.getType().isAir()) {
             return null;
         }
         ItemMeta meta = stack.getItemMeta();
@@ -72,7 +67,7 @@ public final class HaqiItems {
     }
 
     public static boolean isWardenEcho(ItemStack stack) {
-        if (stack == null) {
+        if (stack == null || stack.getType().isAir()) {
             return false;
         }
         ItemMeta meta = stack.getItemMeta();
@@ -103,63 +98,54 @@ public final class HaqiItems {
         return held.level() <= unlocked.level() ? held : unlocked;
     }
 
-    public static void registerRecipes(JavaPlugin plugin) {
-        registerUpgrade(plugin, "haqi_upgraded", HaqiTier.BASIC, HaqiTier.UPGRADED, Material.IRON_INGOT);
-        registerUpgrade(plugin, "haqi_enhanced", HaqiTier.UPGRADED, HaqiTier.ENHANCED, Material.DIAMOND);
+    /**
+     * Resolves a workbench 3x3 matrix into an upgrade result (PDC-based, no Bukkit RecipeChoice).
+     * Pattern: surround ore/echo around a lower-tier haqi in the center.
+     */
+    public static ItemStack matchUpgradeResult(ItemStack[] matrix) {
+        if (matrix == null || matrix.length < 9) {
+            return null;
+        }
+        ItemStack center = matrix[4];
+        HaqiTier centerTier = getHaqiTier(center);
+        if (centerTier == null) {
+            return null;
+        }
 
-        ItemStack result = createHaqi(HaqiTier.WARDEN);
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, "haqi_warden"), result);
-        recipe.shape("EEE", "EHE", "EEE");
-        recipe.setIngredient('H', pdcChoice(createHaqi(HaqiTier.ENHANCED),
-                stack -> getHaqiTier(stack) == HaqiTier.ENHANCED));
-        recipe.setIngredient('E', pdcChoice(createWardenEcho(), HaqiItems::isWardenEcho));
-        plugin.getServer().addRecipe(recipe);
+        int[] surround = {0, 1, 2, 3, 5, 6, 7, 8};
+        if (centerTier == HaqiTier.BASIC && allMatchMaterial(matrix, surround, Material.IRON_INGOT)) {
+            return createHaqi(HaqiTier.UPGRADED);
+        }
+        if (centerTier == HaqiTier.UPGRADED && allMatchMaterial(matrix, surround, Material.DIAMOND)) {
+            return createHaqi(HaqiTier.ENHANCED);
+        }
+        if (centerTier == HaqiTier.ENHANCED && allMatchWardenEcho(matrix, surround)) {
+            return createHaqi(HaqiTier.WARDEN);
+        }
+        return null;
     }
 
-    private static void registerUpgrade(JavaPlugin plugin, String key, HaqiTier from, HaqiTier to, Material surround) {
-        ItemStack result = createHaqi(to);
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, key), result);
-        recipe.shape("SSS", "SHS", "SSS");
-        recipe.setIngredient('H', pdcChoice(createHaqi(from), stack -> getHaqiTier(stack) == from));
-        recipe.setIngredient('S', new RecipeChoice.MaterialChoice(surround));
-        plugin.getServer().addRecipe(recipe);
+    private static boolean allMatchMaterial(ItemStack[] matrix, int[] slots, Material material) {
+        for (int slot : slots) {
+            ItemStack stack = matrix[slot];
+            if (stack == null || stack.getType() != material) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean allMatchWardenEcho(ItemStack[] matrix, int[] slots) {
+        for (int slot : slots) {
+            if (!isWardenEcho(matrix[slot])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static ItemMeta requireMeta(ItemStack stack) {
         return Objects.requireNonNull(stack.getItemMeta(),
                 "ItemMeta unavailable for " + stack.getType());
-    }
-
-    /**
-     * Matches ingredients by our PDC tags only (not ExactChoice), so display name / lore /
-     * component churn cannot silently break crafting.
-     */
-    private static RecipeChoice pdcChoice(ItemStack example, Predicate<ItemStack> matcher) {
-        return new PdcRecipeChoice(example, matcher);
-    }
-
-    private static final class PdcRecipeChoice implements RecipeChoice {
-        private final ItemStack example;
-        private final Predicate<ItemStack> matcher;
-
-        private PdcRecipeChoice(ItemStack example, Predicate<ItemStack> matcher) {
-            this.example = example.clone();
-            this.matcher = matcher;
-        }
-
-        @Override
-        public @NotNull ItemStack getItemStack() {
-            return example.clone();
-        }
-
-        @Override
-        public @NotNull RecipeChoice clone() {
-            return new PdcRecipeChoice(example, matcher);
-        }
-
-        @Override
-        public boolean test(@Nullable ItemStack itemStack) {
-            return itemStack != null && !itemStack.getType().isAir() && matcher.test(itemStack);
-        }
     }
 }

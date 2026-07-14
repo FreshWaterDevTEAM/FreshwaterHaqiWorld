@@ -5,6 +5,7 @@ import com.freshwater.haqiworld.plugin.combat.HaqiAttackTask;
 import com.freshwater.haqiworld.plugin.command.HaqiCommand;
 import com.freshwater.haqiworld.plugin.data.Leaderboard;
 import com.freshwater.haqiworld.plugin.haqi.HaqiItems;
+import com.freshwater.haqiworld.plugin.interaction.HaqiCraftListener;
 import com.freshwater.haqiworld.plugin.interaction.InteractListener;
 import com.freshwater.haqiworld.plugin.mob.MobHaqiListener;
 import com.freshwater.haqiworld.plugin.pack.ResourcePackService;
@@ -28,7 +29,6 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
         this.leaderboard.load();
 
         HaqiItems.init(this);
-        HaqiItems.registerRecipes(this);
 
         BukkitVoicechatService svc = getServer().getServicesManager().load(BukkitVoicechatService.class);
         if (svc != null) {
@@ -40,6 +40,7 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new CombatListener(this, pluginConfig, leaderboard), this);
         getServer().getPluginManager().registerEvents(new InteractListener(this, pluginConfig), this);
+        getServer().getPluginManager().registerEvents(new HaqiCraftListener(), this);
         getServer().getPluginManager().registerEvents(new MobHaqiListener(this, pluginConfig), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 

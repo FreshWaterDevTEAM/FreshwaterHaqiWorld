@@ -10,9 +10,9 @@ mob-haqi-damage: 6.0
 leaderboard-size: 10
 
 resource-pack:
-  enabled: true
-  # Public URL of the Release resource pack (recommended for multiplayer).
-  url: "https://github.com/FreshWaterDevTEAM/FreshwaterHaqiWorld/releases/download/v2.0.2/fhw-resourcepack-2.0.2.zip"
+  # Not needed when players install fhw-client (assets are built into the mod).
+  enabled: false
+  url: "https://github.com/FreshWaterDevTEAM/FreshwaterHaqiWorld/releases/download/v2.0.3/fhw-resourcepack-2.0.3.zip"
   host: ""
   port: 8163
-  force: true
+  force: false
