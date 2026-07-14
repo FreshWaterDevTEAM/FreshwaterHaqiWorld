@@ -27,6 +27,9 @@ public final class CombatListener implements Listener {
         if (!config.removeMeleeCombat) {
             return;
         }
+        if (HaqiDamageGuard.isActive(event.getEntity().getUniqueId())) {
+            return;
+        }
         if (!(event.getDamager() instanceof Player)) {
             return;
         }

@@ -45,7 +45,7 @@ public final class SonicBoomService {
             if (center.distance(closest) > beamRadius + target.getWidth() * 0.5) {
                 continue;
             }
-            target.damage(damage, source);
+            hurt(target, source, damage);
             applyKnockback(target, toTarget.clone().normalize());
         }
     }
@@ -61,5 +61,14 @@ public final class SonicBoomService {
         Vector push = dir.clone().multiply(horizontal);
         push.setY(dir.getY() * vertical + 0.1);
         target.setVelocity(target.getVelocity().add(push));
+    }
+
+    private static void hurt(LivingEntity target, LivingEntity source, float damage) {
+        HaqiDamageGuard.enter(target.getUniqueId());
+        try {
+            target.damage(damage, source);
+        } finally {
+            HaqiDamageGuard.leave(target.getUniqueId());
+        }
     }
 }

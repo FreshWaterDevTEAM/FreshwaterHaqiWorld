@@ -15,6 +15,8 @@ import org.lwjgl.glfw.GLFW;
 public final class HaqiClient {
     private static final KeyMapping HAQI_KEY = new KeyMapping(
             "key.fhw.haqi", GLFW.GLFW_KEY_H, KeyMapping.Category.GAMEPLAY);
+    private static final KeyMapping GIVE_KEY = new KeyMapping(
+            "key.fhw.give", GLFW.GLFW_KEY_G, KeyMapping.Category.GAMEPLAY);
 
     private static boolean wasDown = false;
 
@@ -28,14 +30,18 @@ public final class HaqiClient {
 
     private static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(HAQI_KEY);
+        event.register(GIVE_KEY);
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
-        if (!Config.enableDebugKeybind) {
-            return;
-        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.getConnection() == null) {
+            return;
+        }
+        while (GIVE_KEY.consumeClick()) {
+            mc.player.connection.sendCommand("haqi give all");
+        }
+        if (!Config.enableDebugKeybind) {
             return;
         }
         boolean down = HAQI_KEY.isDown();

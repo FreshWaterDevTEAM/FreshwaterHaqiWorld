@@ -7,8 +7,8 @@ description: Haqi World Survival - Paper server plugin. Fight with microphone ha
 depend: [voicechat]
 commands:
   haqi:
-    description: Haqi leaderboard and unlock commands
-    usage: /haqi <top|unlock>
+    description: Haqi give / leaderboard / unlock / debug
+    usage: /haqi <give|top|unlock|debug|status>
     permission: fhw.command
 permissions:
   fhw.command:
@@ -16,3 +16,6 @@ permissions:
   fhw.unlock:
     description: Unlock haqi tiers via command
     default: op
+  fhw.give:
+    description: Give haqi items
+    default: true
