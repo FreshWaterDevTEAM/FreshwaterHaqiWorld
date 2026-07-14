@@ -1,5 +1,8 @@
-haqi-volume-threshold: 0.08
-haqi-reference-level: 0.15
+haqi-volume-threshold: 0.05
+haqi-reference-level: 0.12
+# When true, any non-empty SVC mic packet counts as haqi (soft speech still works).
+voice-activation-boost: true
+voice-activation-min-loudness: 0.55
 require-haqi-item: true
 remove-melee-combat: true
 enable-debug-keybind: true
@@ -10,9 +13,8 @@ mob-haqi-damage: 6.0
 leaderboard-size: 10
 
 resource-pack:
-  # Not needed when players install fhw-client (assets are built into the mod).
   enabled: false
-  url: "https://github.com/FreshWaterDevTEAM/FreshwaterHaqiWorld/releases/download/v2.0.3/fhw-resourcepack-2.0.3.zip"
+  url: "https://github.com/FreshWaterDevTEAM/FreshwaterHaqiWorld/releases/download/v2.0.4/fhw-resourcepack-2.0.4.zip"
   host: ""
   port: 8163
   force: false

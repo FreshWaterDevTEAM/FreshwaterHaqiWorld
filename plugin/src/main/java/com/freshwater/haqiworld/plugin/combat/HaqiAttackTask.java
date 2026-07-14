@@ -56,6 +56,13 @@ public final class HaqiAttackTask extends BukkitRunnable {
             return;
         }
         if (!VoiceManager.get().isHaqiing(id, config)) {
+            float loudness = VoiceManager.get().getLoudness(id);
+            if (loudness > 0.001F && hintCd <= 0) {
+                player.sendActionBar(Component.text(
+                        String.format("听到声音了(%.2f)但未达阈值 — 再大声点或检查是否手持哈气", loudness),
+                        NamedTextColor.YELLOW));
+                noItemHintCooldown.put(id, 30);
+            }
             return;
         }
         HaqiTier tier = HaqiItems.resolveCombatTier(player, config.requireHaqiItem);

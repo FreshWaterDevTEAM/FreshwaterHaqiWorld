@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
 
 public final class HaqiVoicechatPlugin implements VoicechatPlugin {
     private final PluginConfig config;
@@ -33,15 +32,14 @@ public final class HaqiVoicechatPlugin implements VoicechatPlugin {
     @Override
     public void initialize(VoicechatApi api) {
         this.api = api;
-        Logger log = Bukkit.getLogger();
-        log.info("[FHW] Voicechat API initialized for haqi microphone hook.");
+        Bukkit.getLogger().info("[FHW] Voicechat API initialized.");
     }
 
     @Override
     public void registerEvents(EventRegistration registration) {
         registration.registerEvent(VoicechatServerStartedEvent.class, event -> {
             this.api = event.getVoicechat();
-            Bukkit.getLogger().info("[FHW] Voicechat server started — microphone packets will drive haqi.");
+            Bukkit.getLogger().info("[FHW] Voicechat server started — mic packets drive haqi.");
         });
         registration.registerEvent(MicrophonePacketEvent.class, this::onMicrophone);
     }
@@ -52,42 +50,48 @@ public final class HaqiVoicechatPlugin implements VoicechatPlugin {
         }
         UUID playerId = event.getSenderConnection().getPlayer().getUuid();
         byte[] opus = event.getPacket().getOpusEncodedData();
+
+        // SVC often interleaves empty "end of speech" frames. Do NOT zero loudness here —
+        // VoiceManager timeout handles silence. Clearing here made haqi almost never fire.
         if (opus == null || opus.length == 0) {
-            OpusDecoder old = decoders.remove(playerId);
-            if (old != null) {
-                try {
-                    old.close();
-                } catch (Exception ignored) {
-                }
-            }
-            VoiceManager.get().updateLoudness(playerId, 0.0F);
             return;
         }
+
         VoicechatApi localApi = this.api;
         if (localApi == null) {
             return;
         }
+
         OpusDecoder decoder = decoders.computeIfAbsent(playerId, id -> localApi.createDecoder());
         try {
             short[] pcm = decoder.decode(opus);
-            if (pcm == null || pcm.length == 0) {
-                return;
-            }
             float loudness = VoiceManager.computeLoudness(pcm, config.haqiReferenceLevel);
+
+            // SVC only sends non-empty opus while the client thinks you are talking.
+            // Boost so soft speech still clears the haqi threshold.
+            if (config.voiceActivationBoost) {
+                loudness = Math.max(loudness, (float) config.voiceActivationMinLoudness);
+            }
+
             VoiceManager.get().updateLoudness(playerId, loudness);
+
             long n = packetLogCounter.incrementAndGet();
-            if (n <= 5 || n % 200 == 0) {
-                Bukkit.getLogger().info("[FHW] Mic loudness sample=" + String.format("%.3f", loudness)
-                        + " player=" + playerId);
+            if (n <= 8 || n % 100 == 0) {
+                Bukkit.getLogger().info("[FHW] Mic packet ok loudness=" + String.format("%.3f", loudness)
+                        + " opusBytes=" + opus.length + " player=" + playerId);
             }
         } catch (Exception ex) {
-            // Reset decoder on bad packet so the next one can recover.
+            Bukkit.getLogger().warning("[FHW] Opus decode failed: " + ex.getMessage());
             OpusDecoder bad = decoders.remove(playerId);
             if (bad != null) {
                 try {
                     bad.close();
                 } catch (Exception ignored) {
                 }
+            }
+            // Still treat "client is sending voice" as haqi if decode fails.
+            if (config.voiceActivationBoost) {
+                VoiceManager.get().updateLoudness(playerId, (float) config.voiceActivationMinLoudness);
             }
         }
     }

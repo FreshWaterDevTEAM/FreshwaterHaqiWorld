@@ -8,7 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class VoiceManager {
     private static final VoiceManager INSTANCE = new VoiceManager();
-    private static final long VOICE_TIMEOUT_MS = 300L;
+    /** Keep last voice level briefly so 1-tick gaps between opus frames don't drop haqi. */
+    private static final long VOICE_TIMEOUT_MS = 600L;
 
     private final Map<UUID, Float> loudness = new ConcurrentHashMap<>();
     private final Map<UUID, Long> updatedAt = new ConcurrentHashMap<>();
@@ -50,6 +51,10 @@ public final class VoiceManager {
         }
     }
 
+    public boolean hasDebugOverride(UUID id) {
+        return debugOverride.containsKey(id);
+    }
+
     public void clear(UUID id) {
         loudness.remove(id);
         updatedAt.remove(id);
@@ -62,17 +67,24 @@ public final class VoiceManager {
         debugOverride.clear();
     }
 
+    /** RMS + peak, normalized against reference. */
     public static float computeLoudness(short[] pcm, double referenceLevel) {
         if (pcm == null || pcm.length == 0) {
             return 0.0F;
         }
         double sum = 0.0;
+        double peak = 0.0;
         for (short sample : pcm) {
             double n = sample / 32768.0;
+            double a = Math.abs(n);
+            if (a > peak) {
+                peak = a;
+            }
             sum += n * n;
         }
         double rms = Math.sqrt(sum / pcm.length);
+        double mixed = Math.max(rms, peak * 0.7);
         double ref = Math.max(0.0001, referenceLevel);
-        return (float) Math.max(0.0, Math.min(1.0, rms / ref));
+        return (float) Math.max(0.0, Math.min(1.0, mixed / ref));
     }
 }

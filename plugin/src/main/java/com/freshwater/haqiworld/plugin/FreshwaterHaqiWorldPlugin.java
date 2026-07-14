@@ -23,6 +23,7 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        ensureNewConfigKeys();
         this.pluginConfig = new PluginConfig(this);
         com.freshwater.haqiworld.plugin.data.PlayerData.init(this);
         this.leaderboard = new Leaderboard(this);
@@ -77,5 +78,23 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
 
     public Leaderboard leaderboard() {
         return leaderboard;
+    }
+
+    /** Merge new defaults into an already-generated config.yml without wiping admin edits. */
+    private void ensureNewConfigKeys() {
+        var c = getConfig();
+        boolean changed = false;
+        if (!c.contains("voice-activation-boost")) {
+            c.set("voice-activation-boost", true);
+            changed = true;
+        }
+        if (!c.contains("voice-activation-min-loudness")) {
+            c.set("voice-activation-min-loudness", 0.55);
+            changed = true;
+        }
+        if (changed) {
+            saveConfig();
+            getLogger().info("Added new voice-activation config keys.");
+        }
     }
 }
