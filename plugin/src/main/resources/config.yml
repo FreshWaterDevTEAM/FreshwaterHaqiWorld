@@ -1,9 +1,7 @@
-# Very low floor: any real mic activity can fire; damage/range scale with loudness 0→1.
-haqi-volume-threshold: 0.04
+# Relative AGC maps your soft→loud into 0..1 (fixes absolute levels stuck near 0.001).
+haqi-volume-threshold: 0.08
 haqi-reference-level: 0.10
-# Maps mic samples into 0..1 (higher = easier to reach full power)
 loudness-gain: 2.5
-# Keep false — dynamic scaling needs real loudness, not a flat boost
 voice-activation-boost: false
 voice-activation-min-loudness: 0.55
 require-haqi-item: true
@@ -17,7 +15,7 @@ leaderboard-size: 10
 
 resource-pack:
   enabled: false
-  url: "https://github.com/FreshWaterDevTEAM/FreshwaterHaqiWorld/releases/download/v2.0.6/fhw-resourcepack-2.0.6.zip"
+  url: "https://github.com/FreshWaterDevTEAM/FreshwaterHaqiWorld/releases/download/v2.0.7/fhw-resourcepack-2.0.7.zip"
   host: ""
   port: 8163
   force: false

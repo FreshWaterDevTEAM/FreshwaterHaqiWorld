@@ -65,19 +65,20 @@ public final class HaqiVoicechatPlugin implements VoicechatPlugin {
         OpusDecoder decoder = decoders.computeIfAbsent(playerId, id -> localApi.createDecoder());
         try {
             short[] pcm = decoder.decode(opus);
-            float loudness = VoiceManager.computeLoudness(
-                    pcm, config.haqiReferenceLevel, config.loudnessGain);
+            VoiceManager.PeakStats raw = VoiceManager.measure(pcm);
+            float loudness = VoiceManager.get().ingestPcm(playerId, pcm);
 
             if (config.voiceActivationBoost) {
                 loudness = Math.max(loudness, (float) config.voiceActivationMinLoudness);
+                VoiceManager.get().updateLoudness(playerId, loudness);
             }
 
-            VoiceManager.get().updateLoudness(playerId, loudness);
-
             long n = packetLogCounter.incrementAndGet();
-            if (n <= 8 || n % 100 == 0) {
-                Bukkit.getLogger().info("[FHW] Mic packet ok loudness=" + String.format("%.3f", loudness)
-                        + " opusBytes=" + opus.length + " player=" + playerId);
+            if (n <= 12 || n % 80 == 0) {
+                Bukkit.getLogger().info("[FHW] Mic loudness=" + String.format("%.3f", loudness)
+                        + " rawPeak=" + String.format("%.6f", raw.peak())
+                        + " opus=" + opus.length
+                        + " player=" + playerId);
             }
         } catch (Exception ex) {
             Bukkit.getLogger().warning("[FHW] Opus decode failed: " + ex.getMessage());

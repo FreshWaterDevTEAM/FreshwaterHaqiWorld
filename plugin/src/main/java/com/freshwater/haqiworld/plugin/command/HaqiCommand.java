@@ -169,8 +169,8 @@ public final class HaqiCommand implements CommandExecutor, TabCompleter {
         HaqiTier unlocked = PlayerData.getUnlockedTier(player);
         HaqiTier held = HaqiItems.heldHaqiTier(player);
         sender.sendMessage(Component.text("=== 哈气状态 ===", NamedTextColor.GOLD));
-        sender.sendMessage(Component.text("响度: " + String.format("%.3f", loudness)
-                + " (阈值 " + config.haqiVolumeThreshold + ")", NamedTextColor.WHITE));
+        sender.sendMessage(Component.text("响度: " + String.format("%.0f%% (%.3f)", loudness * 100.0F, loudness)
+                + "  阈值 " + String.format("%.2f", config.haqiVolumeThreshold), NamedTextColor.WHITE));
         sender.sendMessage(Component.text("已解锁: " + unlocked.id(), NamedTextColor.WHITE));
         sender.sendMessage(Component.text("手持哈气: " + (held == null ? "无" : held.id()), NamedTextColor.WHITE));
         sender.sendMessage(Component.text("需要手持物品: " + config.requireHaqiItem, NamedTextColor.WHITE));

@@ -84,14 +84,14 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
     private void ensureNewConfigKeys() {
         var c = getConfig();
         boolean changed = false;
-        if (c.getInt("fhw-config-revision", 0) < 7) {
+        if (c.getInt("fhw-config-revision", 0) < 8) {
             c.set("voice-activation-boost", false);
-            c.set("haqi-volume-threshold", 0.04);
+            c.set("haqi-volume-threshold", 0.08);
             c.set("haqi-reference-level", 0.10);
             c.set("loudness-gain", 2.5);
-            c.set("fhw-config-revision", 7);
+            c.set("fhw-config-revision", 8);
             changed = true;
-            getLogger().info("Config revision 7: dynamic haqi — soft=weak, loud=strong.");
+            getLogger().info("Config revision 8: relative AGC loudness (fixes stuck ~0.001).");
         }
         if (!c.contains("loudness-gain")) {
             c.set("loudness-gain", 2.5);
