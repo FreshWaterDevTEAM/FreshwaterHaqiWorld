@@ -82,7 +82,10 @@ public final class HaqiAttackTask extends BukkitRunnable {
         player.getWorld().playSound(player.getLocation(), "fhw:haqi_player", SoundCategory.PLAYERS,
                 0.5F + loudness * 0.7F, 1.0F);
 
-        SonicBoomService.fire(player, player.getEyeLocation(), dir, range, radius, damage);
+        SonicBoomService.Visual visual = tier == HaqiTier.WARDEN
+                ? SonicBoomService.Visual.VANILLA
+                : SonicBoomService.Visual.RECOLORED;
+        SonicBoomService.fire(player, player.getEyeLocation(), dir, range, radius, damage, visual);
         player.sendActionBar(Component.text(
                 String.format("哈气 %.0f%%  伤害%.1f  射程%.0f", loudness * 100.0F, damage, range),
                 NamedTextColor.AQUA));

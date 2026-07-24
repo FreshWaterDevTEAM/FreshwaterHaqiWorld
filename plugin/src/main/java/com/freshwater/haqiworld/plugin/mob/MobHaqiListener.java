@@ -92,12 +92,16 @@ public final class MobHaqiListener implements Listener {
         }
         Vector dir = target.getEyeLocation().toVector().subtract(mob.getEyeLocation().toVector());
         double range = Math.min(MAX_RANGE, dir.length() + 2.0);
-        float damage = mob instanceof Warden
+        boolean isWarden = mob instanceof Warden;
+        float damage = isWarden
                 ? (float) config.wardenHaqiDamage
                 : (float) config.mobHaqiDamage;
+        SonicBoomService.Visual visual = isWarden
+                ? SonicBoomService.Visual.VANILLA
+                : SonicBoomService.Visual.RECOLORED;
         mob.getWorld().playSound(mob.getLocation(), "fhw:haqi_mob", SoundCategory.HOSTILE,
                 1.5F, 0.8F + (float) (Math.random() * 0.3));
-        SonicBoomService.fire(mob, mob.getEyeLocation(), dir, range, BEAM_RADIUS, damage);
+        SonicBoomService.fire(mob, mob.getEyeLocation(), dir, range, BEAM_RADIUS, damage, visual);
         cooldowns.put(id, config.mobHaqiCooldownTicks);
     }
 

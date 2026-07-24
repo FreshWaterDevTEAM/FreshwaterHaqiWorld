@@ -2,6 +2,7 @@ package com.freshwater.haqiworld.plugin;
 
 import com.freshwater.haqiworld.plugin.combat.CombatListener;
 import com.freshwater.haqiworld.plugin.combat.HaqiAttackTask;
+import com.freshwater.haqiworld.plugin.combat.HaqiFxBridge;
 import com.freshwater.haqiworld.plugin.command.HaqiCommand;
 import com.freshwater.haqiworld.plugin.data.Leaderboard;
 import com.freshwater.haqiworld.plugin.haqi.HaqiItems;
@@ -30,6 +31,7 @@ public final class FreshwaterHaqiWorldPlugin extends JavaPlugin {
         this.leaderboard.load();
 
         HaqiItems.init(this);
+        HaqiFxBridge.init(this);
 
         BukkitVoicechatService svc = getServer().getServicesManager().load(BukkitVoicechatService.class);
         if (svc != null) {

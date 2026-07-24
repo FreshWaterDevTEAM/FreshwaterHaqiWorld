@@ -11,20 +11,36 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 public final class SonicBoomService {
+    public enum Visual {
+        /** Vanilla cyan sonic boom (Warden mob / Warden haqi). */
+        VANILLA,
+        /** Recolored frames via Forge client channel (iron/gold/diamond haqi & other mobs). */
+        RECOLORED
+    }
+
     private SonicBoomService() {
     }
 
     public static void fire(LivingEntity source, Location origin, Vector direction,
                             double range, double beamRadius, float damage) {
+        fire(source, origin, direction, range, beamRadius, damage, Visual.RECOLORED);
+    }
+
+    public static void fire(LivingEntity source, Location origin, Vector direction,
+                            double range, double beamRadius, float damage, Visual visual) {
         Vector dir = direction.clone();
         if (dir.lengthSquared() < 1.0E-6) {
             return;
         }
         dir.normalize();
 
-        for (int i = 1; i <= (int) Math.floor(range); i++) {
-            Location point = origin.clone().add(dir.clone().multiply(i));
-            origin.getWorld().spawnParticle(Particle.SONIC_BOOM, point, 1, 0, 0, 0, 0);
+        if (visual == Visual.VANILLA) {
+            for (int i = 1; i <= (int) Math.floor(range); i++) {
+                Location point = origin.clone().add(dir.clone().multiply(i));
+                origin.getWorld().spawnParticle(Particle.SONIC_BOOM, point, 1, 0, 0, 0, 0);
+            }
+        } else {
+            HaqiFxBridge.sendRecoloredBoom(origin, dir, range);
         }
 
         origin.getWorld().playSound(origin, Sound.ENTITY_WARDEN_SONIC_BOOM, SoundCategory.HOSTILE, 3.0F, 1.0F);

@@ -3,7 +3,9 @@ package com.freshwater.haqiworld.client;
 import com.freshwater.haqiworld.Config;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.SonicBoomParticle;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import org.lwjgl.glfw.GLFW;
@@ -25,12 +27,17 @@ public final class HaqiClient {
 
     public static void init(BusGroup modBusGroup) {
         RegisterKeyMappingsEvent.BUS.addListener(HaqiClient::onRegisterKeyMappings);
+        RegisterParticleProvidersEvent.BUS.addListener(HaqiClient::onRegisterParticles);
         TickEvent.ClientTickEvent.Post.BUS.addListener(HaqiClient::onClientTick);
     }
 
     private static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(HAQI_KEY);
         event.register(GIVE_KEY);
+    }
+
+    private static void onRegisterParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.HAQI_SONIC_BOOM.get(), SonicBoomParticle.Provider::new);
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {

@@ -23,7 +23,10 @@ public final class FreshwaterHaqiWorld {
             return;
         }
         context.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
-        com.freshwater.haqiworld.client.HaqiClient.init(context.getModBusGroup());
+        var modBus = context.getModBusGroup();
+        com.freshwater.haqiworld.client.ModParticles.PARTICLES.register(modBus);
+        com.freshwater.haqiworld.client.HaqiFxChannel.init();
+        com.freshwater.haqiworld.client.HaqiClient.init(modBus);
         LOGGER.info("FreshwaterHaqiWorld client companion initialized.");
     }
 }
