@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,7 +31,7 @@ public final class HaqiItems {
         ItemStack stack = new ItemStack(Material.PAPER);
         ItemMeta meta = requireMeta(stack);
         meta.getPersistentDataContainer().set(KEY_HAQI_ITEM, PersistentDataType.STRING, tier.id());
-        meta.setCustomModelData(tier.customModelData());
+        applyCustomModelData(meta, tier.customModelData());
         meta.displayName(Component.translatable("item.fhw.haqi_" + tier.id())
                 .color(NamedTextColor.AQUA)
                 .decoration(TextDecoration.ITALIC, false));
@@ -46,12 +47,23 @@ public final class HaqiItems {
         ItemStack stack = new ItemStack(Material.PAPER);
         ItemMeta meta = requireMeta(stack);
         meta.getPersistentDataContainer().set(KEY_WARDEN_ECHO, PersistentDataType.BYTE, (byte) 1);
-        meta.setCustomModelData(HaqiTier.WARDEN_ECHO_CMD);
+        applyCustomModelData(meta, HaqiTier.WARDEN_ECHO_CMD);
         meta.displayName(Component.translatable("item.fhw.warden_echo")
                 .color(NamedTextColor.DARK_AQUA)
                 .decoration(TextDecoration.ITALIC, false));
         stack.setItemMeta(meta);
         return stack;
+    }
+
+    /**
+     * 1.21.4+ reads {@code custom_model_data.floats[index]} for item models.
+     * Setting only the legacy integer is unreliable across Paper → Forge clients.
+     */
+    private static void applyCustomModelData(ItemMeta meta, int value) {
+        meta.setCustomModelData(value);
+        CustomModelDataComponent cmd = meta.getCustomModelDataComponent();
+        cmd.setFloats(List.of((float) value));
+        meta.setCustomModelDataComponent(cmd);
     }
 
     public static HaqiTier getHaqiTier(ItemStack stack) {

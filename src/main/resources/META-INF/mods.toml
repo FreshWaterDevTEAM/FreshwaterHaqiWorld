@@ -24,10 +24,10 @@ displayTest="IGNORE_ALL_VERSION"
     ordering="NONE"
     side="CLIENT"
 
-# SVC versions look like "1.21.11-2.6.20" (MC version prefix), so "[2.5,)" incorrectly rejects them.
+# Optional: assets/keybinds still load without SVC. SVC versions look like "1.21.11-2.6.20".
 [[dependencies.${mod_id}]]
     modId="voicechat"
-    mandatory=true
+    mandatory=false
     versionRange="[1.21.11-2.5,)"
     ordering="AFTER"
     side="CLIENT"
